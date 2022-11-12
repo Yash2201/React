@@ -1,30 +1,71 @@
 import './App.css';
+import About from './Components/About';
+import Navbar from './Components/Navbar';
+import TextForm from "./Components/TextForm";
+import React, {useState} from 'react'
+import Alert from './Components/Alert';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route
+} from "react-router-dom";
 
 function App() {
+  const [mode , setMode] = useState('light');
+  const [alert , setAlert] = useState(null);
+  //const [themeColor, setThemeColor] = useState(null)
+  
+  const toggleMode = () =>{
+    if(mode === 'light')
+    {
+        setMode('dark');
+        document.body.style.background = '#79838d'; //'#6f89a0';
+        //document.body.classList.add(`bg-${mode}`);
+        showAlert("Dark Mode Enabled Successfully","success");
+    }
+    else if(mode === 'dark')
+    {
+        setMode('light');
+        document.body.style.background = 'white';
+        //document.body.classList.add(`bg-${mode}`);
+        showAlert("Light Mode Enabled Successfully","success");
+    }
+    // else
+    // {
+    //     document.body.classList.add(`bg-${mode}`);
+    //     showAlert("Theme Updated Successfully","success");
+    // }
+  }
+
+  const showAlert = (message,type)=>{
+    setAlert({
+      type:type,
+      message:message
+    });
+
+    setTimeout(() => {
+      setAlert(null);
+    }, 2000);
+  }
+
+  const updateTheme = (themeColor)=>{
+    //document.body.classList.add(`bg-${themeColor}`); //'#6f89a0';
+    setMode(themeColor);
+    showAlert("Theme Updated Successfully","success");
+  }
+
   return (
     <>
-    <nav className="navbar navbar-expand-lg bg-light">
-      <div className="container-fluid">
-        <a className="navbar-brand" href="\">Text Utils</a>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="\">Home</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="\">About</a>
-            </li>
-          </ul>
-          <form className="d-flex" role="search">
-            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-            <button className="btn btn-outline-success" type="submit">Search</button>
-          </form>
-        </div>
+    <Router>
+      <Navbar title="TextUtiles" mode={mode} toggleMode={toggleMode} updateTheme={updateTheme} />
+      <Alert alert={alert} />
+      <div className="container my-5">
+          <Routes>
+            <Route path="about" element={<About />} />
+            <Route path="/" element={<TextForm heading="Enter the text to analyze below" mode={mode} showAlert={showAlert} />} />            
+          </Routes>
       </div>
-    </nav>
+    </Router>
     </>
   );
 }
